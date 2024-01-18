@@ -1,7 +1,7 @@
-import { deployLock } from "./deploy/Lock";
+import { deployGhovidentFactory } from "./deploy/deployGhovidentFactory";
 
 async function main() {
-  await deployLock();
+  await deployGhovidentFactory();
 }
 
 // We recommend this pattern to be able to use async/await everywhere
