@@ -2,7 +2,15 @@
 pragma solidity ^0.8.9;
 
 interface IGhovidentDeployer {
-    function parameters()
+    // Enums
+    enum RiskLevel {
+        Low,
+        Moderate,
+        High,
+        VeryHigh
+    }
+
+    function companyParameters()
         external
         view
         returns (
@@ -13,5 +21,18 @@ interface IGhovidentDeployer {
             address company,
             string memory link,
             uint256 createdAt
+        );
+
+    function poolParameters()
+        external
+        view
+        returns (
+            address factory,
+            string memory name,
+            address assetes,
+            RiskLevel risk,
+            uint256 period,
+            string memory link,
+            address fundAddress
         );
 }
