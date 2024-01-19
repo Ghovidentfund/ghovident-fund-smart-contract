@@ -5,8 +5,9 @@ import "./GhovidentDeployer.sol";
 import "./interfaces/IGhovidentPool.sol";
 import "./interfaces/IGhovidentInvestment.sol";
 import "./interfaces/IGhovidentDeployer.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract GhovidentPool is IGhovidentPool {
+contract GhovidentPool is IGhovidentPool, Ownable {
     address public factory;
     string public name;
     address public assetes;
@@ -14,10 +15,11 @@ contract GhovidentPool is IGhovidentPool {
     uint256 public period;
     string public link;
     address public fundAddress;
+    bool public status;
 
     IGhovidentInvestment private _fundAddress;
 
-    constructor() {
+    constructor() Ownable(msg.sender) {
         (
             factory,
             name,
@@ -48,9 +50,14 @@ contract GhovidentPool is IGhovidentPool {
             IGhovidentDeployer.RiskLevel,
             uint256,
             string memory,
-            address
+            address,
+            bool
         )
     {
-        return (name, assetes, risk, period, link, fundAddress);
+        return (name, assetes, risk, period, link, fundAddress, status);
+    }
+
+    function setPoolStatus(bool _status) external onlyOwner {
+        status = _status;
     }
 }
