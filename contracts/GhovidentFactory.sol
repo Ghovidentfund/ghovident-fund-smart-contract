@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "./interfaces/IGhovidentFactory.sol";
 import "./GhovidentDeployer.sol";
+import "./interfaces/IGhovidentFactory.sol";
 
 contract GhovidentFactory is IGhovidentFactory, GhovidentDeployer {
     // mapping address company -> address pool
@@ -10,11 +10,29 @@ contract GhovidentFactory is IGhovidentFactory, GhovidentDeployer {
 
     function createPool(
         string memory name,
-        address company,
+        string memory email,
+        string memory country,
+        string memory link,
         uint256 createdAt
     ) external override returns (address pool) {
-        pool = deploy(address(this), name, company, createdAt);
-        getPools[company] = pool;
-        emit PoolCreated(name, company, createdAt, pool);
+        pool = deploy(
+            address(this),
+            name,
+            email,
+            country,
+            msg.sender,
+            link,
+            createdAt
+        );
+        getPools[msg.sender] = pool;
+        emit PoolCreated(
+            name,
+            email,
+            country,
+            msg.sender,
+            link,
+            createdAt,
+            pool
+        );
     }
 }

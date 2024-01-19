@@ -8,7 +8,10 @@ interface IGhovidentDeployer {
         returns (
             address factory,
             string memory name,
+            string memory email,
+            string memory country,
             address company,
+            string memory link,
             uint256 createdAt
         );
 }
