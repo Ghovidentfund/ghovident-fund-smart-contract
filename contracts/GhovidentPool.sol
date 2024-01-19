@@ -1,111 +1,56 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./GhovidentDeployer.sol";
 import "./interfaces/IGhovidentPool.sol";
+import "./interfaces/IGhovidentInvestment.sol";
 import "./interfaces/IGhovidentDeployer.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract GhovidentPool is IGhovidentPool {
-    address public immutable override factory;
-
+    address public factory;
     string public name;
-    string public email;
-    string public country;
-    address public company;
+    address public assetes;
+    IGhovidentDeployer.RiskLevel public risk;
+    uint256 public period;
     string public link;
-    uint256 public createdAt;
+    address public fundAddress;
 
-    // mapping for employees
-    mapping(address => Employee) public employees;
+    IGhovidentInvestment private _fundAddress;
 
     constructor() {
         (
             factory,
             name,
-            email,
-            country,
-            company,
+            assetes,
+            risk,
+            period,
             link,
-            createdAt
-        ) = IGhovidentDeployer(msg.sender).parameters();
+            fundAddress
+        ) = IGhovidentDeployer(msg.sender).poolParameters();
+        _fundAddress = IGhovidentInvestment(fundAddress);
     }
 
-    // function batch create employee
-    function batchCreateEmployee(
-        address[] memory _employeeAddress,
-        string[] memory _name,
-        uint256[] memory _createdAt,
-        uint256[] memory _defindContribution,
-        uint256[] memory _balance,
-        uint256[] memory _salary
-    ) external override {
-        for (uint256 i = 0; i < _employeeAddress.length; i++) {
-            employees[_employeeAddress[i]] = Employee(
-                _name[i],
-                _employeeAddress[i],
-                _createdAt[i],
-                _defindContribution[i],
-                _balance[i],
-                _salary[i],
-                true
-            );
-            emit EmployeeCreated(
-                _employeeAddress[i],
-                _name[i],
-                _createdAt[i],
-                _defindContribution[i],
-                _balance[i],
-                _salary[i]
-            );
-        }
+    function stake(uint _amout) external override {
+        _fundAddress.stake(_amout);
     }
 
-    // function to get employee info
-    function getEmployeeInfo(
-        address _employeeAddress
-    )
+    function loan() external override {
+        _fundAddress.loan();
+    }
+
+    function getPoolInfo()
         external
         view
+        override
         returns (
             string memory,
             address,
+            IGhovidentDeployer.RiskLevel,
             uint256,
-            uint256,
-            uint256,
-            uint256,
-            bool
+            string memory,
+            address
         )
     {
-        Employee memory employee = employees[_employeeAddress];
-        return (
-            employee.name,
-            employee.employeeAddress,
-            employee.createdAt,
-            employee.defindContribution,
-            employee.balance,
-            employee.salary,
-            employee.status
-        );
-    }
-
-    // function update employee info
-    function updateEmployeeInfo(
-        address _employeeAddress,
-        string memory _name,
-        uint256 _createdAt,
-        uint256 _defindContribution,
-        uint256 _balance,
-        uint256 _salary,
-        bool _status
-    ) external {
-        employees[_employeeAddress] = Employee(
-            _name,
-            _employeeAddress,
-            _createdAt,
-            _defindContribution,
-            _balance,
-            _salary,
-            _status
-        );
+        return (name, assetes, risk, period, link, fundAddress);
     }
 }

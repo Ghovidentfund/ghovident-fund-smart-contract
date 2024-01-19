@@ -1,46 +1,42 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+import "./IGhovidentDeployer.sol";
+
 interface IGhovidentPool {
-    event EmployeeCreated(
-        address indexed employeeAddress,
-        string name,
-        uint256 createdAt,
-        uint256 defindContribution,
-        uint256 balance,
-        uint256 salary
-    );
+    // Enums
 
-    struct Employee {
-        string name;
-        address employeeAddress;
-        uint256 createdAt;
-        uint256 defindContribution;
-        uint256 balance;
-        uint256 salary;
-        bool status;
-    }
+    // Event
+    // State variables
+    // function factory() external view returns (address);
 
-    function factory() external view returns (address);
+    // function name() external view returns (string memory);
 
-    function name() external view returns (string memory);
+    // function assetes() external view returns (address);
 
-    function email() external view returns (string memory);
+    // function risk() external view returns (RiskLevel);
 
-    function country() external view returns (string memory);
+    // function period() external view returns (uint256);
 
-    function company() external view returns (address);
+    // function link() external view returns (string memory);
 
-    function link() external view returns (string memory);
+    // function fundAddress() external view returns (address);
 
-    function createdAt() external view returns (uint256);
+    // Write functions
+    function stake(uint _amout) external;
 
-    function batchCreateEmployee(
-        address[] memory _employeeAddress,
-        string[] memory _name,
-        uint256[] memory _createdAt,
-        uint256[] memory _defindContribution,
-        uint256[] memory _balance,
-        uint256[] memory _salary
-    ) external;
+    function loan() external;
+
+    // Read functions
+    function getPoolInfo()
+        external
+        view
+        returns (
+            string memory,
+            address,
+            IGhovidentDeployer.RiskLevel,
+            uint256,
+            string memory,
+            address
+        );
 }
