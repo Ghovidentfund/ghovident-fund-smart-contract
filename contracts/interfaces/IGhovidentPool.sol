@@ -18,6 +18,7 @@ interface IGhovidentPool {
         uint256 defindContribution;
         uint256 balance;
         uint256 salary;
+        bool status;
     }
 
     function factory() external view returns (address);

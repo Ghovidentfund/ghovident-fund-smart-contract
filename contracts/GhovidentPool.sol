@@ -46,7 +46,8 @@ contract GhovidentPool is IGhovidentPool {
                 _createdAt[i],
                 _defindContribution[i],
                 _balance[i],
-                _salary[i]
+                _salary[i],
+                true
             );
             emit EmployeeCreated(
                 _employeeAddress[i],
@@ -57,5 +58,54 @@ contract GhovidentPool is IGhovidentPool {
                 _salary[i]
             );
         }
+    }
+
+    // function to get employee info
+    function getEmployeeInfo(
+        address _employeeAddress
+    )
+        external
+        view
+        returns (
+            string memory,
+            address,
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            bool
+        )
+    {
+        Employee memory employee = employees[_employeeAddress];
+        return (
+            employee.name,
+            employee.employeeAddress,
+            employee.createdAt,
+            employee.defindContribution,
+            employee.balance,
+            employee.salary,
+            employee.status
+        );
+    }
+
+    // function update employee info
+    function updateEmployeeInfo(
+        address _employeeAddress,
+        string memory _name,
+        uint256 _createdAt,
+        uint256 _defindContribution,
+        uint256 _balance,
+        uint256 _salary,
+        bool _status
+    ) external {
+        employees[_employeeAddress] = Employee(
+            _name,
+            _employeeAddress,
+            _createdAt,
+            _defindContribution,
+            _balance,
+            _salary,
+            _status
+        );
     }
 }
