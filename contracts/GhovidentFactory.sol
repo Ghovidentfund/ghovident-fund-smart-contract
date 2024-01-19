@@ -8,6 +8,11 @@ contract GhovidentFactory is GhovidentDeployer {
     event PoolCreated(address pool);
     event CompanyCreated(address company);
 
+    // State variables
+    address[] public pools;
+    address[] public companies;
+
+    // Functions
     function createCompany(
         string memory name,
         string memory email,
@@ -23,6 +28,7 @@ contract GhovidentFactory is GhovidentDeployer {
             link,
             block.timestamp
         );
+        pools.push(companyPool);
         emit CompanyCreated(companyPool);
     }
 
