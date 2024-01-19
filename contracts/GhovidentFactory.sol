@@ -2,37 +2,47 @@
 pragma solidity ^0.8.20;
 
 import "./GhovidentDeployer.sol";
-import "./interfaces/IGhovidentFactory.sol";
 
-contract GhovidentFactory is IGhovidentFactory, GhovidentDeployer {
-    // mapping address company -> address pool
-    mapping(address => address) public getPools;
+contract GhovidentFactory is GhovidentDeployer {
+    // Events
+    event PoolCreated(address pool);
+    event CompanyCreated(address company);
 
-    function createPool(
+    function createCompany(
         string memory name,
         string memory email,
         string memory country,
-        string memory link,
-        uint256 createdAt
-    ) external override returns (address pool) {
-        pool = deploy(
+        string memory link
+    ) external returns (address companyPool) {
+        companyPool = deployCompanyPool(
             address(this),
             name,
             email,
             country,
             msg.sender,
             link,
-            createdAt
+            block.timestamp
         );
-        getPools[msg.sender] = pool;
-        emit PoolCreated(
-            name,
-            email,
-            country,
-            msg.sender,
-            link,
-            createdAt,
-            pool
+        emit CompanyCreated(companyPool);
+    }
+
+    function createPool(
+        string memory _name,
+        address _assetes,
+        RiskLevel _risk,
+        uint256 _period,
+        string memory _link,
+        address _fundAddress
+    ) external returns (address pool) {
+        pool = deployPool(
+            address(this),
+            _name,
+            _assetes,
+            _risk,
+            _period,
+            _link,
+            _fundAddress
         );
+        emit PoolCreated(pool);
     }
 }
