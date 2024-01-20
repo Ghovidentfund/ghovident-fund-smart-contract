@@ -6,11 +6,12 @@ import "./interfaces/IGhovidentPool.sol";
 import "./interfaces/IGhovidentInvestment.sol";
 import "./interfaces/IGhovidentDeployer.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./interfaces/IERC20WithPermit.sol";
 
 contract GhovidentPool is IGhovidentPool, Ownable {
     address public factory;
     string public name;
-    address public assetes;
+    address public assetes; // token support
     IGhovidentDeployer.RiskLevel public risk;
     uint256 public period;
     string public link;
@@ -18,6 +19,14 @@ contract GhovidentPool is IGhovidentPool, Ownable {
     bool public status;
 
     IGhovidentInvestment private _fundAddress;
+    IERC20WithPermit public assetesToken;
+
+    uint public totalStaked;
+    mapping(address => uint) public balances;
+
+    // บริษัทมากฝากเงินใน pool
+    // ซึ่งใน pool มันจะลงทุนที่ GProvidentFund ที่เดียว!
+    // stake -> โอนเงินให้ GProvidentFund -> AavePool
 
     constructor() Ownable(msg.sender) {
         (
@@ -30,10 +39,19 @@ contract GhovidentPool is IGhovidentPool, Ownable {
             fundAddress
         ) = IGhovidentDeployer(msg.sender).poolParameters();
         _fundAddress = IGhovidentInvestment(fundAddress);
+        assetesToken = IERC20WithPermit(assetes);
     }
 
-    function stake(uint _amout) external override {
-        _fundAddress.stake(_amout);
+    function stake(uint256 amount) external override {
+        // ! approve ghovidentFund to spend amount from ghovidentPool
+        assetesToken.approve(address(_fundAddress), amount);
+        assetesToken.transferFrom(msg.sender, address(this), amount);
+        totalStaked += amount;
+        balances[msg.sender] += amount;
+        _fundAddress.stake(address(this), amount);
+
+        // AaveToken approve pool , msg.sender
+        // AvveToken approve avvePool , pool
     }
 
     function loan() external override {

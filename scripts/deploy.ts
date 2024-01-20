@@ -1,9 +1,9 @@
-import { deployScamFund } from "./deploy/deployScamFund";
+import { deployGProvidentFund } from "./deploy/deployGProvidentFund";
 import { deployGhovidentFactory } from "./deploy/deployGhovidentFactory";
 
 async function main() {
   await deployGhovidentFactory();
-  await deployScamFund();
+  await deployGProvidentFund();
 }
 
 main().catch((error) => {

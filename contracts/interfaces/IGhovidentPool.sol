@@ -5,7 +5,7 @@ import "./IGhovidentDeployer.sol";
 
 interface IGhovidentPool {
     // Write functions
-    function stake(uint _amout) external;
+    function stake(uint256 amount) external;
 
     function loan() external;
 
