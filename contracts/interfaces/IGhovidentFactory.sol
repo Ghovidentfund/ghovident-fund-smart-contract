@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.5.0;
 
+import "./IGhovidentPool.sol";
+
 interface IGhovidentFactory {
     struct Company {
         string name;
@@ -45,6 +47,8 @@ interface IGhovidentFactory {
 
     // Read functions
     function getAllPools() external view returns (address[] memory);
+
+    function getAllPoolInfo() external view returns (IGhovidentPool.PoolInfo[] memory);
 
     function getAllCompany() external view returns (Company[] memory);
 

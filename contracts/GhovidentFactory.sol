@@ -54,6 +54,20 @@ contract GhovidentFactory is IGhovidentFactory {
     }
 
     // getters
+    function getAllPoolInfo()
+        external
+        view
+        returns (IGhovidentPool.PoolInfo[] memory)
+    {
+        IGhovidentPool.PoolInfo[]
+            memory _poolInfos = new IGhovidentPool.PoolInfo[](pools.length);
+
+        for (uint i = 0; i < pools.length; i++) {
+            _poolInfos[i] = IGhovidentPool(pools[i]).getPoolInfo();
+        }
+        return _poolInfos;
+    }
+
     function getAllPools() external view returns (address[] memory) {
         return pools;
     }
@@ -75,12 +89,12 @@ contract GhovidentFactory is IGhovidentFactory {
 
     function getMyPools(
         address _company
-    ) public view returns (IGhovidentPool.PoolInfo[] memory) {
+    ) public view returns (IGhovidentPool.MyPoolInfo[] memory) {
         address[] memory _pools = inverstAllIn[_company];
-        IGhovidentPool.PoolInfo[]
-            memory _poolInfos = new IGhovidentPool.PoolInfo[](_pools.length);
+        IGhovidentPool.MyPoolInfo[]
+            memory _poolInfos = new IGhovidentPool.MyPoolInfo[](_pools.length);
         for (uint i = 0; i < _pools.length; i++) {
-            _poolInfos[i] = IGhovidentPool(_pools[i]).getPoolInfo(_company);
+            _poolInfos[i] = IGhovidentPool(_pools[i]).getMyPoolInfo(_company);
         }
         return _poolInfos;
     }

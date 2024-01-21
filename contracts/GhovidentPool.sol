@@ -67,11 +67,25 @@ contract GhovidentPool is IGhovidentPool {
         volumeOf[msg.sender] -= amount;
     }
 
-    function getPoolInfo(
-        address _company
-    ) external view override returns (PoolInfo memory) {
+    function getPoolInfo() external view returns (PoolInfo memory) {
         return
             PoolInfo(
+                name,
+                logoUri,
+                factSheetUri,
+                risk,
+                period,
+                assets,
+                fund,
+                totalVolume
+            );
+    }
+
+    function getMyPoolInfo(
+        address _company
+    ) external view returns (MyPoolInfo memory) {
+        return
+            MyPoolInfo(
                 name,
                 logoUri,
                 factSheetUri,
