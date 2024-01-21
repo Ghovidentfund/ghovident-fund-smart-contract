@@ -19,6 +19,7 @@ contract GhovidentPool is IGhovidentPool {
 
     IERC20WithPermit private _token;
     IGhovidentFactory private _ghovidentFactory;
+    IGhovidentFund private _ghovidentFund;
 
     uint256 public totalVolume;
 
@@ -45,27 +46,25 @@ contract GhovidentPool is IGhovidentPool {
 
         _token = IERC20WithPermit(_assets);
         _ghovidentFactory = IGhovidentFactory(_factory);
+        _ghovidentFund = IGhovidentFund(_fund);
     }
 
-    function buy(uint256 amount) public {
+    function supply(uint256 amount) public {
+        require(amount <= _token.balanceOf(msg.sender), "Not enough balance");
         _token.transferFrom(msg.sender, address(this), amount);
         totalVolume += amount;
         volumeOf[msg.sender] += amount;
         _ghovidentFactory.investIn(msg.sender, address(this));
-        supply();
+        _token.approve(address(_ghovidentFund), amount);
+        _ghovidentFund.supply(assets, address(this), amount);
     }
 
-    function withdraw(uint256 amount) public {
+    function withdraw() public {
+        uint256 amount = volumeOf[msg.sender];
         require(amount <= volumeOf[msg.sender], "Not enough balance");
-        _token.transfer(msg.sender, amount);
+        _ghovidentFund.withdraw(assets, msg.sender, amount);
         totalVolume -= amount;
         volumeOf[msg.sender] -= amount;
-    }
-
-    function claim() public {}
-
-    function supply() internal {
-        // Call Fund to supply
     }
 
     function getPoolInfo(

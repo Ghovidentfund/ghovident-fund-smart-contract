@@ -73,12 +73,19 @@ contract GhovidentFactory is IGhovidentFactory {
         investCount[_company] += 1;
     }
 
-    function getMyPools(address _company) public view {
+    function getMyPools(
+        address _company
+    ) public view returns (IGhovidentPool.PoolInfo[] memory) {
         address[] memory _pools = inverstAllIn[_company];
         IGhovidentPool.PoolInfo[]
             memory _poolInfos = new IGhovidentPool.PoolInfo[](_pools.length);
         for (uint i = 0; i < _pools.length; i++) {
             _poolInfos[i] = IGhovidentPool(_pools[i]).getPoolInfo(_company);
         }
+        return _poolInfos;
+    }
+
+    function isValidCompany(address _company) external view returns (bool) {
+        return company[_company].companyAddress != address(0);
     }
 }
