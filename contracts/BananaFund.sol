@@ -5,7 +5,8 @@ import "./GhovidentPool.sol";
 import "./interfaces/IAavePool.sol";
 import "./interfaces/IGhovidentFund.sol";
 
-contract GhovidentFund is IGhovidentFund {
+contract BananaFund is IGhovidentFund {
+    // 
     IAavePool public aavePool;
 
     constructor(address _aavePool) {

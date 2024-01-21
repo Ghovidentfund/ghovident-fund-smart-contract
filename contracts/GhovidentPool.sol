@@ -3,101 +3,85 @@ pragma solidity ^0.8.20;
 
 import "./interfaces/IERC20WithPermit.sol";
 import "./interfaces/IGhovidentFund.sol";
+import "./interfaces/IGhovidentPool.sol";
+import "./interfaces/IGhovidentFactory.sol";
 
-contract GhovidentPool {
-    // Pool state
+contract GhovidentPool is IGhovidentPool {
     address public immutable factory;
-    string public name; // pool name
-    uint256 public totalInvestment;
 
-    IERC20WithPermit public assetToken;
-    IGhovidentFund public ghovidentFund;
+    string public name;
+    string public logoUri;
+    string public factSheetUri;
+    uint256 public risk; // 1 = low, 2 = monderate, 3 = high , 4 = very high
+    uint256 public period; // 0 = 1M, 1 = 3M, 2 = 6M, 3 = 12M
+    address public assets; // address of token
+    address public fund;
 
-    struct Company {
-        // uint companyId;
-        string name;
-        address companyAddress;
-        uint256 totalInvestment;
-        uint256 totalEmployee;
-        Employee[] employees;
-    }
+    IERC20WithPermit private _token;
+    IGhovidentFactory private _ghovidentFactory;
 
-    struct Employee {
-        // uint companyId;
-        // uint employeeId;
-        string name;
-        address employeeAddress;
-        // uint256 salary;
-        uint256 joinDate;
-        // uint256 contribution;
-        uint256 totalPay;
-    }
+    uint256 public totalVolume;
 
-    // uint public emplaoyeeId = 0;
-    // uint public companyId = 0;
-    mapping(address => Company) public allCompanies;
-    mapping(address => Employee) public allEmployees;
+    mapping(address => uint256) public volumeOf; // volume of each company
 
     constructor(
         address _factory,
         string memory _name,
-        address _assetToken,
-        address _ghovidentFund
+        string memory _logoUri,
+        string memory _factSheetUri,
+        uint256 _risk,
+        uint256 _period,
+        address _assets,
+        address _fund
     ) {
         factory = _factory;
         name = _name;
-        assetToken = IERC20WithPermit(_assetToken);
-        ghovidentFund = IGhovidentFund(_ghovidentFund);
+        logoUri = _logoUri;
+        factSheetUri = _factSheetUri;
+        risk = _risk;
+        period = _period;
+        assets = _assets;
+        fund = _fund;
+
+        _token = IERC20WithPermit(_assets);
+        _ghovidentFactory = IGhovidentFactory(_factory);
     }
 
-    // https://stackoverflow.com/questions/72573064/push-data-into-a-nested-struct-array
-    // create function to add company and employee
-    function registerCompany(
-        string memory _name,
-        string[] calldata _employeeNames,
-        address[] calldata _employeeAddresses,
-        uint256[] calldata _employeeJoinDates,
-        uint256[] calldata _employeeTotalPays
-    ) external {
-        Company storage company = allCompanies[msg.sender];
-        company.name = _name;
-        company.companyAddress = msg.sender;
-        company.totalInvestment = 0;
-        company.totalEmployee = 0;
-
-        for (uint i = 0; i < _employeeNames.length; i++) {
-            Employee storage employee = allEmployees[_employeeAddresses[i]];
-
-            employee.name = _employeeNames[i];
-            employee.employeeAddress = _employeeAddresses[i];
-            employee.joinDate = _employeeJoinDates[i];
-            employee.totalPay = _employeeTotalPays[i];
-            company.totalEmployee++;
-            company.employees.push(employee);
-            totalInvestment += _employeeTotalPays[i];
-        }
-
-        // TODO: require balance of assetToken is enough
-        assetToken.transferFrom(msg.sender, address(this), totalInvestment);
-
-        allCompanies[msg.sender] = company;
+    function buy(uint256 amount) public {
+        _token.transferFrom(msg.sender, address(this), amount);
+        totalVolume += amount;
+        volumeOf[msg.sender] += amount;
+        _ghovidentFactory.investIn(msg.sender, address(this));
+        supply();
     }
 
-    //
-
-    // setters
-    function setName(string memory _name) external {
-        name = _name;
+    function withdraw(uint256 amount) public {
+        require(amount <= volumeOf[msg.sender], "Not enough balance");
+        _token.transfer(msg.sender, amount);
+        totalVolume -= amount;
+        volumeOf[msg.sender] -= amount;
     }
 
-    // getters
-    function getName() external view returns (string memory) {
-        return name;
+    function claim() public {}
+
+    function supply() internal {
+        // Call Fund to supply
     }
 
-    function getCompany(
-        address _companyAddress
-    ) external view returns (Company memory) {
-        return allCompanies[_companyAddress];
+    function getPoolInfo(
+        address _company
+    ) external view override returns (PoolInfo memory) {
+        return
+            PoolInfo(
+                name,
+                logoUri,
+                factSheetUri,
+                risk,
+                period,
+                assets,
+                fund,
+                totalVolume,
+                volumeOf[_company]
+            );
     }
 }

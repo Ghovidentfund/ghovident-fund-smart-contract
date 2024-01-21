@@ -1,9 +1,9 @@
 import { deployGhovidentFactory } from "./deploy/deployGhovidentFactory";
-import { deployGhovidentFund } from "./deploy/deployGhovidentFund";
+import { deployBananaFund } from "./deploy/deployBananaFund";
 
 async function main() {
   await deployGhovidentFactory();
-  await deployGhovidentFund();
+  await deployBananaFund();
 }
 
 main().catch((error) => {

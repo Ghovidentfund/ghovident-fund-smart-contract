@@ -1,15 +1,15 @@
 import hre, { ethers } from "hardhat";
 import addressUtils from "../../utils/addressUtils";
 
-export async function deployGhovidentFund() {
+export async function deployBananaFund() {
   const aavePoolAddress = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
-  const ghovidentFund = await ethers.deployContract("GhovidentFund", [
+  const bananaFund = await ethers.deployContract("BananaFund", [
     aavePoolAddress,
   ]);
 
-  await ghovidentFund.waitForDeployment();
+  await bananaFund.waitForDeployment();
 
   await addressUtils.saveAddresses(hre.network.name, {
-    GhovidentFund: await ghovidentFund.getAddress(),
+    BananaFund: await bananaFund.getAddress(),
   });
 }
