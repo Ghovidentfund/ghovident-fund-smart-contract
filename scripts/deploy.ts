@@ -1,11 +1,11 @@
-import { deployLock } from "./deploy/Lock";
+import { deployGhovidentFactory } from "./deploy/deployGhovidentFactory";
+import { deployFund } from "./deploy/deployFund";
 
 async function main() {
-  await deployLock();
+  await deployGhovidentFactory();
+  await deployFund();
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
