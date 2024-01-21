@@ -18,5 +18,5 @@ interface IGhovidentPool {
 
     function getPoolInfo(
         address _company
-    ) external view returns (PoolInfo memory);
+    ) external view returns (PoolInfo memory poolInfo);
 }

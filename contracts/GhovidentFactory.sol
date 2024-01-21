@@ -75,9 +75,10 @@ contract GhovidentFactory is IGhovidentFactory {
 
     function getMyPools(address _company) public view {
         address[] memory _pools = inverstAllIn[_company];
-        PoolInfo[] memory _poolInfos = new PoolInfo[](_pools.length);
+        IGhovidentPool.PoolInfo[]
+            memory _poolInfos = new IGhovidentPool.PoolInfo[](_pools.length);
         for (uint i = 0; i < _pools.length; i++) {
-            // destructering
+            _poolInfos[i] = IGhovidentPool(_pools[i]).getPoolInfo(_company);
         }
     }
 }

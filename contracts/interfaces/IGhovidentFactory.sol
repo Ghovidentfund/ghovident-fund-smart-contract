@@ -10,18 +10,6 @@ interface IGhovidentFactory {
         // uint256 totalEmployee;
     }
 
-    struct PoolInfo {
-        string name;
-        string logoUri;
-        string factSheetUri;
-        uint256 risk;
-        uint256 period;
-        address assets;
-        address fund;
-        uint256 totalVolume;
-        uint256 volume;
-    }
-
     event PoolCreated(address pool, address owner);
 
     // State variables
