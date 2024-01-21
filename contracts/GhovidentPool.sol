@@ -70,6 +70,7 @@ contract GhovidentPool is IGhovidentPool {
     function getPoolInfo() external view returns (PoolInfo memory) {
         return
             PoolInfo(
+                address(this),
                 name,
                 logoUri,
                 factSheetUri,
@@ -86,6 +87,7 @@ contract GhovidentPool is IGhovidentPool {
     ) external view returns (MyPoolInfo memory) {
         return
             MyPoolInfo(
+                address(this),
                 name,
                 logoUri,
                 factSheetUri,

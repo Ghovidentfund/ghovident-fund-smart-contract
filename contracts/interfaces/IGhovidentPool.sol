@@ -5,6 +5,7 @@ interface IGhovidentPool {
     //  State variables
 
     struct PoolInfo {
+        address thisAddress;
         string name;
         string logoUri;
         string factSheetUri;
@@ -16,6 +17,7 @@ interface IGhovidentPool {
     }
 
     struct MyPoolInfo {
+        address thisAddress;
         string name;
         string logoUri;
         string factSheetUri;
