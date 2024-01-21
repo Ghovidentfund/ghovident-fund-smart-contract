@@ -8,8 +8,15 @@ contract GhovidentFactory {
 
     event PoolCreated(address pool, address owner);
 
-    function createPool(string memory _name) external {
-        address pool = address(new GhovidentPool(address(this), _name));
+    function createPool(
+        string memory _name,
+        address _assetToken,
+        address _ghovidentFund
+    ) external {
+        // TODO: validate assetToken and ghovidentFund is same address
+        address pool = address(
+            new GhovidentPool(address(this), _name, _assetToken, _ghovidentFund)
+        );
         pools.push(pool);
         emit PoolCreated(pool, msg.sender);
     }

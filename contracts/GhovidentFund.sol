@@ -3,8 +3,9 @@ pragma solidity ^0.8.20;
 
 import "./GhovidentPool.sol";
 import "./interfaces/IAavePool.sol";
+import "./interfaces/IGhovidentFund.sol";
 
-contract GhovidentFund {
+contract GhovidentFund is IGhovidentFund {
     IAavePool public aavePool;
 
     constructor(address _aavePool) {

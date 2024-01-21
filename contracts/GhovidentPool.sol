@@ -1,11 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "./interfaces/IERC20WithPermit.sol";
+import "./interfaces/IGhovidentFund.sol";
+
 contract GhovidentPool {
     // Pool state
     address public immutable factory;
     string public name; // pool name
     uint256 public totalInvestment;
+
+    IERC20WithPermit public assetToken;
+    IGhovidentFund public ghovidentFund;
 
     struct Company {
         // uint companyId;
@@ -32,9 +38,16 @@ contract GhovidentPool {
     mapping(address => Company) public allCompanies;
     mapping(address => Employee) public allEmployees;
 
-    constructor(address _factory, string memory _name) {
+    constructor(
+        address _factory,
+        string memory _name,
+        address _assetToken,
+        address _ghovidentFund
+    ) {
         factory = _factory;
         name = _name;
+        assetToken = IERC20WithPermit(_assetToken);
+        ghovidentFund = IGhovidentFund(_ghovidentFund);
     }
 
     // https://stackoverflow.com/questions/72573064/push-data-into-a-nested-struct-array
@@ -43,38 +56,29 @@ contract GhovidentPool {
         string memory _name,
         string[] calldata _employeeNames,
         address[] calldata _employeeAddresses,
-        // uint256[] calldata _employeeSalaries,
         uint256[] calldata _employeeJoinDates,
-        // uint256[] calldata _employeeContributions
         uint256[] calldata _employeeTotalPays
     ) external {
-        // if (companyId != 0) {
-        //     companyId++;
-        // }
         Company storage company = allCompanies[msg.sender];
-        // company.companyId = companyId;
         company.name = _name;
         company.companyAddress = msg.sender;
         company.totalInvestment = 0;
         company.totalEmployee = 0;
 
         for (uint i = 0; i < _employeeNames.length; i++) {
-            // if (emplaoyeeId != 0) {
-            //     emplaoyeeId++;
-            // }
             Employee storage employee = allEmployees[_employeeAddresses[i]];
-            // employee.companyId = companyId;
-            // employee.employeeId = emplaoyeeId;
+
             employee.name = _employeeNames[i];
             employee.employeeAddress = _employeeAddresses[i];
-            // employee.salary = _employeeSalaries[i];
             employee.joinDate = _employeeJoinDates[i];
-            // employee.contribution = _employeeContributions[i];
             employee.totalPay = _employeeTotalPays[i];
             company.totalEmployee++;
             company.employees.push(employee);
             totalInvestment += _employeeTotalPays[i];
         }
+
+        // TODO: require balance of assetToken is enough
+        assetToken.transferFrom(msg.sender, address(this), totalInvestment);
 
         allCompanies[msg.sender] = company;
     }
